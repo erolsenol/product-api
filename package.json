@@ -1,0 +1,28 @@
+{
+  "name": "product-api",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "main.js",
+  "scripts": {
+    "start": "node ./main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erolsenol/product-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/erolsenol/product-api/issues"
+  },
+  "homepage": "https://github.com/erolsenol/product-api#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "fs": "*",
+    "image-downloader": "^4.0.2",
+    "jsdom": "^16.5.3",
+    "mssql": "^6.3.1",
+    "path": "^0.12.7"
+  }
+}
