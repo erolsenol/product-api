@@ -19,8 +19,8 @@ const dbConfig = {
   };
 
 
-export const GetProductsHref = function () {
-    const res = axios.get("https://www.epey.com/");
+export const GetProductsHref = async function (url) {
+    const res = await axios.get(url);
     const dom = new JSDOM(res.data);
 
     const elmHref = dom.window.document.querySelector("a.urunadi");
@@ -31,8 +31,8 @@ export const GetProductsHref = function () {
     return Href;
 }
 
-export const PageNext = function () {
-    const res = axios.get(url);
+export const PageNext = async function () {
+    const res = await axios.get(url);
     const dom = new JSDOM(res.data);
 
     const elmNextPage = dom.window.document.querySelector("a.ileri");
@@ -47,10 +47,10 @@ export const PageNext = function () {
     return isNextPage;
 }
 
-export const SearchDB = function (url){
+export const SearchDB = function (product_url){
     const con = sql.connect(dbConfig);
 
-    const selectSql = `select id from product where link = '${url}'`
+    const selectSql = `select id from product where link = '${product_url}'`
     const result = con.request().query(selectSql);
 
     if(result.rowsAffected[0] < 1){
@@ -78,8 +78,8 @@ export const DownloadImage = function (imageUrl){
       return name+"."+ext;
 }
 
-export const GetDetail = function (url) {
-    const res = axios.get(url);
+export const GetDetail = async function (url) {
+    const res = await axios.get(url);
     const dom = new JSDOM(res.data);
 
     const productName = dom.window.document.querySelector("a[href='url']").title.replaceAll("'", "\"");
@@ -142,13 +142,15 @@ export const InsertProductDB = function (product){
 
     const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
+    const imagePath = DownloadImage(product.image);
+
     const insertSql = `insert into product (long_name, brand, point, link, image, date, json, code, category_id)
     values(
         '${product.long_name}',
         '${product.brand}',
         '${product.point}',
         '${product.link}',
-        '${product.image}',
+        '${product.imagePath}',
         '${product.date}',
         '${product.json}',
         '${product.code}',
