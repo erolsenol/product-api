@@ -7,7 +7,18 @@ import path from "path";
 //image npm packed import Jimp from 'jimp';
 const { JSDOM } = jsdom;
 
-const dbConfig = {
+
+
+let config = {
+    method: 'get',
+    url: 'https://www.epey.com/bulasik-makinesi/',
+    headers: { 
+      'Cookie': '__cfduid=d5e0f89a51c8a838465e72192c7c9b32b1618991511; PHPSESSID=3b78d364e3815c42c3618f22865de71a'
+    },
+    timeout: 2000
+  };
+
+let dbConfig = {
     server: "localhost",
     database: "productdb",
     user: "sa",
@@ -18,12 +29,37 @@ const dbConfig = {
     }
   };
 
+  export const GetProductsHrefThen = function (url) {
+    console.log(config);
+    config.url = url;
+    console.log("axi hrefs then");
+    console.log(config);
+    return axios(config).then((res) => {
+        console.log("Dom hrefs");
+        const dom =  new JSDOM(res.data);
+        console.log("Hrefs[]");
+        const elmHref =  dom.window.document.querySelector("a.urunadi");
+        const Href = [];
+        for (let a = 0; a < elmHref.length; a++) {
+            Href.push(elmHref[a].href);
+        }
+        return Href;
+    })
+    .catch((error) => {
+        console.log(error);
+      });
+}
 
 export const GetProductsHref = async function (url) {
-    const res = await axios.get(url);
-    const dom = new JSDOM(res.data);
+    console.log(config);
+    config.url = url;
+    console.log(config);
+    const res = await axios(config);
+    console.log("Dom hrefs");
+    const dom = await new JSDOM(res.data);
 
-    const elmHref = dom.window.document.querySelector("a.urunadi");
+    console.log("Hrefs[]");
+    const elmHref = await dom.window.document.querySelector("a.urunadi");
     const Href = [];
     for (let a = 0; a < elmHref.length; a++) {
         Href.push(elmHref[a].href);
@@ -31,8 +67,9 @@ export const GetProductsHref = async function (url) {
     return Href;
 }
 
-export const PageNext = async function () {
-    const res = await axios.get(url);
+export const PageNext = async function (url) {
+    config.url = url;
+    const res = await axios.get(url, {withCredentials: true});
     const dom = new JSDOM(res.data);
 
     const elmNextPage = dom.window.document.querySelector("a.ileri");
@@ -79,7 +116,8 @@ export const DownloadImage = function (imageUrl){
 }
 
 export const GetDetail = async function (url) {
-    const res = await axios.get(url);
+    config.url = url;
+    const res = await axios.get(url, {withCredentials: true});
     const dom = new JSDOM(res.data);
 
     const productName = dom.window.document.querySelector("a[href='url']").title.replaceAll("'", "\"");

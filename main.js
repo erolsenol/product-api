@@ -4,38 +4,75 @@ import {
     SearchDB,
     InsertProductDB,
     GetDetail,
+    GetProductsHrefThen,
 } from "./src/lib/epey.js";
 
-import axios from "axios";
+import axioss from "axios";
 import jsdom from "jsdom";
 const { JSDOM } = jsdom;
-(async function name() {
-    var config = {
-        method: 'get',
-        url: 'https://www.epey.com/',
-        headers: { 
-          'Cookie': '__cfduid=d5e0f89a51c8a838465e72192c7c9b32b1618991511; PHPSESSID=5622720a688fb1515019c8783b5f8007'
-        }
-      };
-    const res = await axios(config);
-    console.log(res.data);
-    const dom = await new JSDOM(res.data);
 
-    const elmHref = await dom.window.document.querySelector("li.renk1");
-    console.log(elmHref);
+import request from "postman-request";
+
+import url from "url";
+import https from "https";
+import HttpsProxyAgent from "https-proxy-agent";
+
+
+
+(function name() {
+  // HTTP/HTTPS proxy to connect to
+  var proxy = process.env.http_proxy ||
+    process.env.HTTP_PROXY ||
+    process.env.https_proxy ||
+    process.env.HTTPS_PROXY ||
+    'https://168.63.76.32:3128';
+  console.log('using proxy server %j', proxy);
+ 
+  // HTTPS endpoint for the proxy to connect to
+  var endpoint = process.argv[2] || 'https://www.google.com/';
+  console.log('attempting to GET %j', endpoint);
+  var options = url.parse(endpoint);
+  
+  // create an instance of the `HttpsProxyAgent` class with the proxy server information
+  var agent = new HttpsProxyAgent(proxy);
+  options.agent = agent;
+  
+  https.get(options, function (res) {
+    console.log('"response" event!', res.headers);
+    res.pipe(process.stdout);
+  });
 });
 
+
+let config = {
+  agent: new HttpsProxyAgent(proxy), 
+  url: 'bulasik-makinesi/',
+  method: 'get',
+  baseURL: 'https://www.epey.com/',
+  headers: { 
+    'Cookie': '__cfduid=d5e0f89a51c8a838465e72192c7c9b32b1618991511; PHPSESSID=3b78d364e3815c42c3618f22865de71a',
+    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,
+    'Accept': '*/*',
+    'Connection': 'keep-alive'
+  },
+  timeout: 2000
+ 
+};
+
 (function() {
-    let config = {
-        method: 'get',
-        url: 'https://www.epey.com/',
-        headers: { 
-          'Cookie': '__cfduid=d5e0f89a51c8a838465e72192c7c9b32b1618991511; PHPSESSID=5622720a688fb1515019c8783b5f8007'
-        },
-        timeout: 2000
-      };
-      
-      axios(config)
+
+  let proxy = process.env.http_proxy ||
+  process.env.HTTP_PROXY ||
+  process.env.https_proxy ||
+  process.env.HTTPS_PROXY || 'http://168.63.76.32:3128';
+  console.log('using proxy server %j', proxy);
+ 
+// create an instance of the `HttpsProxyAgent` class with the proxy server information
+var agent = new HttpsProxyAgent(proxy);
+
+config.httpsAgent = agent;
+
+    axioss(config)
       .then((response) => {
         console.log(JSON.stringify(response.data));
       })
@@ -46,22 +83,25 @@ const { JSDOM } = jsdom;
 
 async function GetProducts(Url, catID) {
     do {
-        let nowUrl = Url;
-        const productsHres = await GetProductsHref(nowUrl);
+      let nowUrl = Url;
+        const productsHres = await GetProductsHrefThen(Url);
         for (let a = 0; a < productsHres.length; a++) {
-            if (SearchDB(productsHres[a])) {
+            if (await SearchDB(productsHres[a])) {
                 console.log(productsHres[a].substr(21));
                 const productDetails = await GetDetail(productsHres[a]);
-                InsertProductDB(productDetails);
+                productDetails.catid = catID;
+                await InsertProductDB(productDetails);
             }
         }
         console.log("if over");
-        const nextPage = await PageNext(nowUrl);
-        nowUrl = nextPage.url;
-    } while (nextPage.isThere);
+        const nextPage = await PageNext(Url);
+        Url = nextPage.url;
+    } while (await nextPage.isThere);
 }
+(async () => {
+  //await GetProducts("https://www.epey.com/bulasik-makinesi/", 64);
+})();
 
-//GetProducts("https://www.epey.com/bulasik-makinesi/", 64);
    //GetProducts("https://www.epey.com/sanal-gerceklik/", 51);
    //GetProducts("https://www.epey.com/camasir-makinesi/", 65);
    //GetProducts("https://www.epey.com/kurutma-makinesi/", 66);
