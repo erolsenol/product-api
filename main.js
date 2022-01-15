@@ -12,12 +12,14 @@ import {
 import jsdom from "jsdom";
 const { JSDOM } = jsdom;
 
-(() => {
- getAxios();
-})();
+// (() => {
+//  getAxios();
+// })();
 
 async function GetProducts(Url, catID) {
-    do {
+
+
+            do {
       let nowUrl = Url;
         const productsHres = await GetProductsHrefThen(Url);
         for (let a = 0; a < productsHres.length; a++) {
@@ -34,8 +36,11 @@ async function GetProducts(Url, catID) {
     } while (await nextPage.isThere);
 }
 (async () => {
-  //await GetProducts("https://www.epey.com/bulasik-makinesi/", 64);
-});
+  await GetProducts("https://www.epey.com/bulasik-makinesi/", 64);
+})();
+
+
+// GetProducts("https://www.epey.com/akilli-telefonlar/", 1);
 
    //GetProducts("https://www.epey.com/sanal-gerceklik/", 51);
    //GetProducts("https://www.epey.com/camasir-makinesi/", 65);
