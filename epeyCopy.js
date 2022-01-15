@@ -1,7 +1,6 @@
 import sql from "mssql";
 import download from "image-downloader";
 import axios from "axios";
-import got from "got";
 //import fs from "fs;"
 import jsdom from "jsdom";
 import path from "path";
@@ -12,7 +11,7 @@ const { JSDOM } = jsdom;
 
 let config = {
     method: 'get',
-    url: 'https://www.epey.com/',
+    url: 'https://www.epey.com/bulasik-makinesi/',
     headers: { 
       'Cookie': '__cfduid=d5e0f89a51c8a838465e72192c7c9b32b1618991511; PHPSESSID=3b78d364e3815c42c3618f22865de71a'
     },
@@ -29,11 +28,6 @@ let dbConfig = {
       "enableArithAbort": true
     }
   };
-
-  export const getAxios = async function () {
-    console.log(await got.get("https://www.epey.com/"));
-       
-  }
 
   export const GetProductsHrefThen = function (url) {
     console.log(config);
@@ -95,20 +89,6 @@ export const SearchDB = function (product_url){
 
     const selectSql = `select id from product where link = '${product_url}'`
     const result = con.request().query(selectSql);
-
-    if(result.rowsAffected[0] < 1){
-        return true;
-    }else { 
-      return false;
-    }
-}
-
-export const SearchDBAll = function (){
-    const con = sql.connect(dbConfig);
-
-    const selectSql = `select * from product`;
-    const result = con.request().query(selectSql);
-    console.log(result);
 
     if(result.rowsAffected[0] < 1){
         return true;

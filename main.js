@@ -5,80 +5,15 @@ import {
     InsertProductDB,
     GetDetail,
     GetProductsHrefThen,
+    SearchDBAll,
+    getAxios,
 } from "./src/lib/epey.js";
 
-import axioss from "axios";
 import jsdom from "jsdom";
 const { JSDOM } = jsdom;
 
-import request from "postman-request";
-
-import url from "url";
-import https from "https";
-import HttpsProxyAgent from "https-proxy-agent";
-
-
-
-(function name() {
-  // HTTP/HTTPS proxy to connect to
-  var proxy = process.env.http_proxy ||
-    process.env.HTTP_PROXY ||
-    process.env.https_proxy ||
-    process.env.HTTPS_PROXY ||
-    'https://168.63.76.32:3128';
-  console.log('using proxy server %j', proxy);
- 
-  // HTTPS endpoint for the proxy to connect to
-  var endpoint = process.argv[2] || 'https://www.google.com/';
-  console.log('attempting to GET %j', endpoint);
-  var options = url.parse(endpoint);
-  
-  // create an instance of the `HttpsProxyAgent` class with the proxy server information
-  var agent = new HttpsProxyAgent(proxy);
-  options.agent = agent;
-  
-  https.get(options, function (res) {
-    console.log('"response" event!', res.headers);
-    res.pipe(process.stdout);
-  });
-});
-
-
-let config = {
-  agent: new HttpsProxyAgent(proxy), 
-  url: 'bulasik-makinesi/',
-  method: 'get',
-  baseURL: 'https://www.epey.com/',
-  headers: { 
-    'Cookie': '__cfduid=d5e0f89a51c8a838465e72192c7c9b32b1618991511; PHPSESSID=3b78d364e3815c42c3618f22865de71a',
-    'User-Agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36" ,
-    'Accept': '*/*',
-    'Connection': 'keep-alive'
-  },
-  timeout: 2000
- 
-};
-
-(function() {
-
-  let proxy = process.env.http_proxy ||
-  process.env.HTTP_PROXY ||
-  process.env.https_proxy ||
-  process.env.HTTPS_PROXY || 'http://168.63.76.32:3128';
-  console.log('using proxy server %j', proxy);
- 
-// create an instance of the `HttpsProxyAgent` class with the proxy server information
-var agent = new HttpsProxyAgent(proxy);
-
-config.httpsAgent = agent;
-
-    axioss(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch((error) => {
-        console.log(error);
-      });      
+(() => {
+ getAxios();
 })();
 
 async function GetProducts(Url, catID) {
@@ -100,7 +35,7 @@ async function GetProducts(Url, catID) {
 }
 (async () => {
   //await GetProducts("https://www.epey.com/bulasik-makinesi/", 64);
-})();
+});
 
    //GetProducts("https://www.epey.com/sanal-gerceklik/", 51);
    //GetProducts("https://www.epey.com/camasir-makinesi/", 65);

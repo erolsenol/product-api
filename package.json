@@ -20,6 +20,7 @@
   "dependencies": {
     "axios": "^0.21.1",
     "fs": "*",
+    "got": "^11.8.2",
     "https": "^1.0.0",
     "https-proxy-agent": "^5.0.0",
     "image-downloader": "^4.0.2",
